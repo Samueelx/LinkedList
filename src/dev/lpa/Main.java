@@ -1,8 +1,14 @@
 package dev.lpa;
 
 import java.util.LinkedList;
-import java.util.ListIterator;
 import java.util.Scanner;
+
+record Place(String town, int distance){
+    @Override
+    public String toString() {
+        return String.format("%s (%d)", town, distance);
+    }
+}
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
@@ -13,13 +19,15 @@ public class Main {
             printPrompt();
             String input = scanner.nextLine();
             switch (input){
-                case "I" ->
-                    addPlaces(places);
-                case "L" ->
-                    listPlaces(places);
-                case "F" -> moveForward(places);
-                default -> {
-                    flag = false;
+                case "L" -> {
+                    Place nairobi = new Place("Nairobi", 90);
+                    addPlace(places, nairobi);
+                    addPlace(places, new Place("Muranga", 270));
+                    addPlace(places, new Place("Thika", 70));
+                    addPlace(places, new Place("Nakuru", 360));
+                    addPlace(places, new Place("Naivasha", 320));
+                    addPlace(places, new Place("Kiambu", 0));
+                    System.out.println(places);
                 }
             }
         }
@@ -39,33 +47,27 @@ public class Main {
                 """).append("\n");
         System.out.println(prompt);
     }
-
-    private static void addPlaces(LinkedList<Place> places){
-        Place kiambu = new Place("Kiambu", 0);
-        places.addFirst(kiambu);
-        System.out.println("How many towns do you want recorded?");
-        int numberOfTowns = Integer.parseInt(scanner.nextLine());
-        for (int i = 0; i < numberOfTowns; i++){
-            System.out.printf("Town %d%n", i+1);
-            String town = scanner.nextLine().trim();
-            System.out.printf("Distance from Home: %n");
-            int distance = Integer.parseInt(scanner.nextLine().trim());
-            places.add(new Place(town, distance));
+    private static void addPlace(LinkedList<Place> places, Place place){
+        if (places.contains(place)){
+            System.out.println("Found duplicate: " + place);
+            return;
         }
+        for (Place p: places){
+            if (p.town().equalsIgnoreCase(place.town())){
+                System.out.println("Found duplicate: " + place);
+                return;
+            }
+        }
+        int matchedIndex = 0;
+        for (Place p : places){
+            if (place.distance() < p.distance()){
+                places.add(matchedIndex, place);
+                return;
+            }
+            matchedIndex++;
+        }
+        places.add(place);
     }
 
-    private static void listPlaces(LinkedList<Place> places){
-        ListIterator<Place> iterator = places.listIterator();
-        while (iterator.hasNext()){
-            System.out.println(iterator.next().toString());
-        }
-    }
-    private static void moveForward(LinkedList<Place> places){
-        ListIterator<Place> iterator = places.listIterator();
-        Place previousPlace = iterator.next();//0
-        while (iterator.hasNext()){
-            System.out.println("--> From " + previousPlace.getTown() + " to " + iterator.next());//1
-            previousPlace = town;
-        }
-    }
+
 }
