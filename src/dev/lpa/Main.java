@@ -1,6 +1,7 @@
 package dev.lpa;
 
 import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Scanner;
 
 record Place(String town, int distance){
@@ -14,21 +15,43 @@ public class Main {
     private static Scanner scanner = new Scanner(System.in);
     public static void main(String[] args) {
         LinkedList<Place> places = new LinkedList<>();
+        addPlace(places, new Place("Nairobi", 90));
+        addPlace(places, new Place("Muranga", 270));
+        addPlace(places, new Place("Thika", 70));
+        addPlace(places, new Place("Nakuru", 360));
+        addPlace(places, new Place("Naivasha", 320));
+        addPlace(places, new Place("Kiambu", 0));
+        ListIterator<Place> iterator = places.listIterator();
         boolean flag = true;
+        boolean forward = true;
+        printPrompt();
         while (flag){
-            printPrompt();
-            String input = scanner.nextLine();
+            if (!iterator.hasPrevious()){
+                System.out.println("Originating: " + iterator.next());
+                forward = true;
+            }
+            if (!iterator.hasNext()){
+                System.out.println("Final: " + iterator.previous());
+                forward = false;
+            }
+            System.out.print("Enter a value: ");
+            String input = scanner.nextLine().toUpperCase().substring(0, 1);
             switch (input){
                 case "L" -> {
-                    Place nairobi = new Place("Nairobi", 90);
-                    addPlace(places, nairobi);
-                    addPlace(places, new Place("Muranga", 270));
-                    addPlace(places, new Place("Thika", 70));
-                    addPlace(places, new Place("Nakuru", 360));
-                    addPlace(places, new Place("Naivasha", 320));
-                    addPlace(places, new Place("Kiambu", 0));
                     System.out.println(places);
                 }
+                case "M" -> printPrompt();
+                case "F" -> {
+                    System.out.println("User wants to move forward");
+                    if (iterator.hasNext())
+                        System.out.println(iterator.next());
+                }
+                case "B" -> {
+                    System.out.println("User wants to move backwards");
+                    if (iterator.hasPrevious())
+                        System.out.println(iterator.previous());
+                }
+                default -> flag = false;
             }
         }
 
@@ -43,8 +66,7 @@ public class Main {
                 (I)nput Places
                 (L)ist places
                 (M)enu
-                (Q)uit
-                """).append("\n");
+                (Q)uit """).append("\n");
         System.out.println(prompt);
     }
     private static void addPlace(LinkedList<Place> places, Place place){
