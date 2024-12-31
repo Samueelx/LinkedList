@@ -43,11 +43,23 @@ public class Main {
                 case "M" -> printPrompt();
                 case "F" -> {
                     System.out.println("User wants to move forward");
+                    if (!forward){
+                        forward = true;
+                        if (iterator.hasNext()){
+                            iterator.next();
+                        }
+                    }
                     if (iterator.hasNext())
                         System.out.println(iterator.next());
                 }
                 case "B" -> {
                     System.out.println("User wants to move backwards");
+                    if (forward){
+                        forward = false;
+                        if (iterator.hasPrevious()){
+                            iterator.previous();
+                        }
+                    }
                     if (iterator.hasPrevious())
                         System.out.println(iterator.previous());
                 }
